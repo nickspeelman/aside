@@ -36,7 +36,7 @@ fun HomeScreen(summary: MoodSummary) {
                     style = MaterialTheme.typography.displayLarge,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = "out of 10", style = MaterialTheme.typography.bodySmall)
+                Text(text = "out of 5", style = MaterialTheme.typography.bodySmall)
             }
         }
         

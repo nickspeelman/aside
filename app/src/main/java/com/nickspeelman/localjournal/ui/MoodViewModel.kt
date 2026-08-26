@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 class MoodViewModel(
     private val repository: MoodRepository,
@@ -22,25 +21,32 @@ class MoodViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val settings: StateFlow<UserSettings> = settingsManager.settingsFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UserSettings(3, 22, 0, 8, 0, false))
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            UserSettings(3, 22, 0, 8, 0, false, true)
+        )
 
-    fun updateSettings(newSettings: UserSettings) {
-        viewModelScope.launch {
-            settingsManager.updateSettings(newSettings)
-        }
+    /**
+     * Suspends until DataStore has committed the settings. Callers can safely reschedule work
+     * immediately after this returns without racing the write.
+     */
+    suspend fun saveSettings(newSettings: UserSettings) {
+        settingsManager.updateSettings(newSettings)
     }
 
     val summaryData: StateFlow<MoodSummary> = repository.allEntries.map { entries ->
         if (entries.isEmpty()) MoodSummary()
         else {
             val avgRating = entries.map { it.rating }.average()
-            val hashtags = entries.flatMap { it.hashtags.split(",").filter { tag -> tag.isNotBlank() } }
+            val hashtags = entries
+                .flatMap { it.hashtags.split(",").filter { tag -> tag.isNotBlank() } }
                 .groupingBy { it }
                 .eachCount()
                 .toList()
                 .sortedByDescending { it.second }
                 .take(5)
-            
+
             MoodSummary(avgRating.toFloat(), hashtags)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MoodSummary())

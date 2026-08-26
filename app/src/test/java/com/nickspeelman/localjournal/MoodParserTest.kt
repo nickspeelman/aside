@@ -8,10 +8,10 @@ class MoodParserTest {
 
     @Test
     fun `parse full entry correctly`() {
-        val input = "8 feeling great #happy #sun"
+        val input = "4 feeling great #happy #sun"
         val entry = ParserUtils.parseMoodInput(input)
         
-        assertEquals(8, entry.rating)
+        assertEquals(4, entry.rating)
         assertEquals("feeling great", entry.note)
         assertEquals("#happy,#sun", entry.hashtags)
     }
@@ -28,10 +28,10 @@ class MoodParserTest {
 
     @Test
     fun `parse rating and hashtags only`() {
-        val input = "10 #amazing #blessed"
+        val input = "5 #amazing #blessed"
         val entry = ParserUtils.parseMoodInput(input)
         
-        assertEquals(10, entry.rating)
+        assertEquals(5, entry.rating)
         assertEquals("", entry.note)
         assertEquals("#amazing,#blessed", entry.hashtags)
     }
@@ -41,14 +41,14 @@ class MoodParserTest {
         val input = "abc note #tag"
         val entry = ParserUtils.parseMoodInput(input)
         
-        assertEquals(5, entry.rating) // Default
+        assertEquals(3, entry.rating) // Default adjusted to middle of 1-5
         assertEquals("note", entry.note)
         assertEquals("#tag", entry.hashtags)
     }
 
     @Test
     fun `clamp rating value`() {
-        assertEquals(10, ParserUtils.parseMoodInput("15").rating)
+        assertEquals(5, ParserUtils.parseMoodInput("15").rating)
         assertEquals(1, ParserUtils.parseMoodInput("0").rating)
         assertEquals(1, ParserUtils.parseMoodInput("-5").rating)
     }

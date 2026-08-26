@@ -44,7 +44,7 @@ fun MoodEntryItem(entry: MoodEntry) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Rating: ${entry.rating}/10",
+                    text = "Rating: ${entry.rating}/5",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

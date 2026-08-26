@@ -11,37 +11,52 @@ import com.nickspeelman.localjournal.data.MoodEntry
 import com.nickspeelman.localjournal.data.MoodRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class MoodReplyReceiver : BroadcastReceiver() {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
     override fun onReceive(context: Context, intent: Intent) {
         val remoteInput = RemoteInput.getResultsFromIntent(intent)
-        val replyText = remoteInput?.getCharSequence(NotificationHelper.KEY_TEXT_REPLY)?.toString()
+        val replyText = remoteInput
+            ?.getCharSequence(NotificationHelper.KEY_TEXT_REPLY)
+            ?.toString()
 
-        if (!replyText.isNullOrBlank()) {
-            val parsedEntry = ParserUtils.parseMoodInput(replyText)
-            
-            scope.launch {
-                val db = MoodDatabase.getDatabase(context)
+        if (replyText.isNullOrBlank()) return
+
+        // BroadcastReceiver.onReceive() is short-lived. goAsync() keeps the process alive while
+        // Room performs the database write on a background dispatcher.
+        val pendingResult = goAsync()
+        val appContext = context.applicationContext
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val parsedEntry = ParserUtils.parseMoodInput(replyText)
+                val db = MoodDatabase.getDatabase(appContext)
                 val repository = MoodRepository(db.moodDao())
                 repository.insert(parsedEntry)
 
-                // Update notification to confirm receipt
-                val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_PROMPT_ID)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
-                    .setContentTitle("Response Saved")
-                    .setContentText("Your mood has been recorded.")
-                    .build()
+                if (NotificationHelper(appContext).canPostNotifications()) {
+                    val notification = NotificationCompat.Builder(
+                        appContext,
+                        NotificationHelper.CHANNEL_PROMPT_ID
+                    )
+                        .setSmallIcon(android.R.drawable.stat_notify_chat)
+                        .setContentTitle("Response Saved")
+                        .setContentText("Your mood has been recorded.")
+                        .setAutoCancel(true)
+                        .build()
 
-                try {
-                    NotificationManagerCompat.from(context).notify(NotificationHelper.NOTIFICATION_PROMPT_ID, notification)
-                } catch (e: SecurityException) {
-                    // Handle missing notification permission if necessary
+                    try {
+                        NotificationManagerCompat.from(appContext).notify(
+                            NotificationHelper.NOTIFICATION_PROMPT_ID,
+                            notification
+                        )
+                    } catch (_: SecurityException) {
+                        // Permission may have been revoked between the check and notify().
+                    }
                 }
+            } finally {
+                pendingResult.finish()
             }
         }
     }
@@ -50,7 +65,7 @@ class MoodReplyReceiver : BroadcastReceiver() {
 object ParserUtils {
     fun parseMoodInput(input: String): MoodEntry {
         val parts = input.trim().split(Regex("\\s+"))
-        val rating = parts.firstOrNull()?.toIntOrNull() ?: 5 // Default to 5 if unparseable
+        val rating = parts.firstOrNull()?.toIntOrNull() ?: 3 // Default to 3 if unparseable
 
         val noteParts = mutableListOf<String>()
         val hashtagParts = mutableListOf<String>()
@@ -64,7 +79,7 @@ object ParserUtils {
         }
 
         return MoodEntry(
-            rating = rating.coerceIn(1, 10),
+            rating = rating.coerceIn(1, 5),
             note = noteParts.joinToString(" "),
             hashtags = hashtagParts.joinToString(",")
         )

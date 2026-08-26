@@ -1,13 +1,17 @@
 package com.nickspeelman.localjournal.notifications
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+import androidx.core.content.ContextCompat
 import com.nickspeelman.localjournal.MainActivity
 
 class NotificationHelper(private val context: Context) {
@@ -46,9 +50,37 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    fun showMoodPrompt() {
+    fun canPostNotifications(channelId: String? = CHANNEL_PROMPT_ID): Boolean {
+        val runtimePermissionGranted =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+
+        if (!runtimePermissionGranted ||
+            !NotificationManagerCompat.from(context).areNotificationsEnabled()
+        ) {
+            return false
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && channelId != null) {
+            val channel = notificationManager.getNotificationChannel(channelId)
+            if (channel == null || channel.importance == NotificationManager.IMPORTANCE_NONE) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    /** Returns true when the notification was handed to Android successfully. */
+    fun showMoodPrompt(): Boolean {
+        createNotificationChannels()
+        if (!canPostNotifications(CHANNEL_PROMPT_ID)) return false
+
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY).run {
-            setLabel("Rate your mood (1-10) [Note] [#tags]")
+            setLabel("1-5 Note #Tags, e.g. '4 at the beach #friends'")
             build()
         }
 
@@ -71,29 +103,38 @@ class NotificationHelper(private val context: Context) {
             context,
             0,
             contentIntent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_PROMPT_ID)
             .setSmallIcon(android.R.drawable.stat_notify_chat)
             .setContentTitle("How are you feeling?")
-            .setContentText("Rate your mood from 1 to 10.")
+            .setContentText("On a scale of 1-5, how do you feel right now?")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .addAction(replyAction)
             .setContentIntent(contentPendingIntent)
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(NOTIFICATION_PROMPT_ID, notification)
+        return try {
+            notificationManager.notify(NOTIFICATION_PROMPT_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
     }
 
-    fun showWeeklySummary(summaryText: String) {
+    /** Returns true when the notification was handed to Android successfully. */
+    fun showWeeklySummary(summaryText: String): Boolean {
+        createNotificationChannels()
+        if (!canPostNotifications(CHANNEL_SUMMARY_ID)) return false
+
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_SUMMARY_ID)
@@ -105,6 +146,11 @@ class NotificationHelper(private val context: Context) {
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(NOTIFICATION_SUMMARY_ID, notification)
+        return try {
+            notificationManager.notify(NOTIFICATION_SUMMARY_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
     }
 }

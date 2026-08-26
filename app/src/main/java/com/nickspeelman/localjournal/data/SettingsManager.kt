@@ -18,6 +18,7 @@ class SettingsManager(private val context: Context) {
         val SLEEP_END_HOUR = intPreferencesKey("sleep_end_hour")
         val SLEEP_END_MINUTE = intPreferencesKey("sleep_end_minute")
         val IS_PAUSED = booleanPreferencesKey("is_paused")
+        val USE_24_HOUR = booleanPreferencesKey("use_24_hour")
     }
 
     val settingsFlow: Flow<UserSettings> = context.dataStore.data.map { preferences ->
@@ -27,7 +28,8 @@ class SettingsManager(private val context: Context) {
             sleepStartMinute = preferences[SLEEP_START_MINUTE] ?: 0,
             sleepEndHour = preferences[SLEEP_END_HOUR] ?: 8,
             sleepEndMinute = preferences[SLEEP_END_MINUTE] ?: 0,
-            isPaused = preferences[IS_PAUSED] ?: false
+            isPaused = preferences[IS_PAUSED] ?: false,
+            use24Hour = preferences[USE_24_HOUR] ?: true
         )
     }
 
@@ -39,6 +41,7 @@ class SettingsManager(private val context: Context) {
             preferences[SLEEP_END_HOUR] = settings.sleepEndHour
             preferences[SLEEP_END_MINUTE] = settings.sleepEndMinute
             preferences[IS_PAUSED] = settings.isPaused
+            preferences[USE_24_HOUR] = settings.use24Hour
         }
     }
 }
@@ -49,5 +52,6 @@ data class UserSettings(
     val sleepStartMinute: Int,
     val sleepEndHour: Int,
     val sleepEndMinute: Int,
-    val isPaused: Boolean = false
+    val isPaused: Boolean = false,
+    val use24Hour: Boolean = true
 )

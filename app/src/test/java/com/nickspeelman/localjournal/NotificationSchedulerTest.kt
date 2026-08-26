@@ -4,7 +4,7 @@ import com.nickspeelman.localjournal.data.UserSettings
 import com.nickspeelman.localjournal.notifications.NotificationScheduler
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.util.*
+import java.util.Calendar
 
 class NotificationSchedulerTest {
 
@@ -13,49 +13,75 @@ class NotificationSchedulerTest {
         sleepStartHour = 22, // 10 PM
         sleepStartMinute = 0,
         sleepEndHour = 8, // 8 AM
-        sleepEndMinute = 0
+        sleepEndMinute = 0,
+        isPaused = false,
+        use24Hour = true
     )
 
     @Test
     fun `schedule during sleep hours should delay until wake time`() {
-        // Current time: 2 AM
+        // Current time: 2 AM. First waking window is 8:00-11:30.
         val now = getTime(2, 0)
         val delay = NotificationScheduler.calculateNextDelayMinutes(now, settings)
-        
-        // Expected: Should be at least 6 hours away (until 8 AM)
+
         assertTrue("Delay should be at least 6 hours", delay >= 6 * 60)
-        // And no more than 6 hours + window duration (14 hours / 4 = 3.5 hours)
-        assertTrue("Delay should be within the first window", delay <= (6 * 60) + 210)
+        assertTrue("Delay should stay within the first window", delay < (6 * 60) + 210)
     }
 
     @Test
-    fun `schedule during waking hours should pick next window`() {
-        // Waking: 8 AM - 10 PM (14 hours)
-        // Windows: 8-11:30, 11:30-15:00, 15:00-18:30, 18:30-22:00
-        
-        // Current time: 9 AM (first window)
+    fun `new schedule during waking hours can use remainder of current window`() {
+        // Current time: 9 AM, inside first window (8:00-11:30).
         val now = getTime(9, 0)
-        val delay = NotificationScheduler.calculateNextDelayMinutes(now, settings)
-        
-        // Expected: Should be scheduled for the next window starting at 11:30
-        // Delay should be at least 2.5 hours (until 11:30)
-        assertTrue("Delay should be at least 2.5 hours", delay >= 2.5 * 60)
-        // And no more than 2.5 hours + 3.5 hours (the next window duration)
-        assertTrue("Delay should be within the second window", delay <= (2.5 * 60) + 210)
+        val delay = NotificationScheduler.calculateNextDelayMinutes(
+            nowMillis = now,
+            settings = settings,
+            includeCurrentWindow = true
+        )
+
+        assertTrue("Delay should be at least one minute", delay >= 1)
+        assertTrue("Delay should remain in the current window", delay < 150)
     }
 
     @Test
-    fun `schedule after last window should delay until next day wake time`() {
-        // Current time: 9 PM (after last window starts at 18:30)
-        // Or if we define "after last window starts", the logic picks tomorrow.
-        // My logic says: if nextWindowIndex >= promptsPerDay -> Tomorrow.
-        // 9 PM is in the last window (index 3). Next is index 4.
-        
+    fun `after a prompt fires scheduler advances to next window`() {
+        // Current time: 9 AM. Next window is 11:30-15:00.
+        val now = getTime(9, 0)
+        val delay = NotificationScheduler.calculateNextDelayMinutes(
+            nowMillis = now,
+            settings = settings,
+            includeCurrentWindow = false
+        )
+
+        assertTrue("Delay should reach the next window", delay >= 150)
+        assertTrue("Delay should stay within the next window", delay < 360)
+    }
+
+    @Test
+    fun `new schedule in final window can still notify today`() {
+        // Current time: 9 PM, final window is 18:30-22:00.
         val now = getTime(21, 0)
-        val delay = NotificationScheduler.calculateNextDelayMinutes(now, settings)
-        
-        // Expected: Tomorrow 8 AM. Delay = 3 hours (to midnight) + 8 hours = 11 hours
+        val delay = NotificationScheduler.calculateNextDelayMinutes(
+            nowMillis = now,
+            settings = settings,
+            includeCurrentWindow = true
+        )
+
+        assertTrue("Delay should be at least one minute", delay >= 1)
+        assertTrue("Delay should be before bedtime", delay < 60)
+    }
+
+    @Test
+    fun `after prompt in final window scheduler moves to tomorrow`() {
+        val now = getTime(21, 0)
+        val delay = NotificationScheduler.calculateNextDelayMinutes(
+            nowMillis = now,
+            settings = settings,
+            includeCurrentWindow = false
+        )
+
+        // Tomorrow's first window begins 11 hours later at 8 AM.
         assertTrue("Delay should be at least 11 hours", delay >= 11 * 60)
+        assertTrue("Delay should remain in tomorrow's first window", delay < (11 * 60) + 210)
     }
 
     private fun getTime(hour: Int, minute: Int): Long {

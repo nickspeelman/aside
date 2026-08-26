@@ -23,7 +23,7 @@ class WeeklySummaryWorker(context: Context, workerParams: WorkerParameters) :
             val avgRating = entries.map { it.rating }.average()
             val entryCount = entries.size
             
-            val summaryText = "You recorded $entryCount entries this week with an average mood of ${"%.1f".format(avgRating)}/10."
+            val summaryText = "You recorded $entryCount entries this week with an average mood of ${"%.1f".format(avgRating)}/5."
             
             NotificationHelper(applicationContext).showWeeklySummary(summaryText)
         }
