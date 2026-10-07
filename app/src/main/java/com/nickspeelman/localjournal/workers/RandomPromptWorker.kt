@@ -18,12 +18,13 @@ class RandomPromptWorker(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         val settingsManager = SettingsManager(applicationContext)
         val settings = settingsManager.settingsFlow.first()
+        val privacy = settingsManager.privacySettingsFlow.first()
 
         if (settings.isPaused) {
             return Result.success()
         }
 
-        NotificationHelper(applicationContext).showMoodPrompt()
+        NotificationHelper(applicationContext).showMoodPrompt(privacy, settings.checkInNotificationTimeoutMinutes)
 
         // The current window has now produced its prompt, so advance to a later window.
         scheduleNext(

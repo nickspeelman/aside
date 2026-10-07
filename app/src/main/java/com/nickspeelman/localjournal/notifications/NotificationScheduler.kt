@@ -1,11 +1,35 @@
 package com.nickspeelman.localjournal.notifications
 
 import com.nickspeelman.localjournal.data.UserSettings
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Calendar
 import kotlin.math.max
 import kotlin.random.Random
 
 object NotificationScheduler {
+
+    fun isWithinWakingWindow(
+        nowMillis: Long,
+        settings: UserSettings,
+        zoneId: ZoneId = ZoneId.systemDefault()
+    ): Boolean {
+        if (settings.isPaused) return false
+
+        val now = Instant.ofEpochMilli(nowMillis).atZone(zoneId).toLocalTime()
+        val wake = LocalTime.of(settings.sleepEndHour, settings.sleepEndMinute)
+        val sleep = LocalTime.of(settings.sleepStartHour, settings.sleepStartMinute)
+
+        // Equal endpoints match the scheduler's existing interpretation: a 24-hour waking window.
+        if (wake == sleep) return true
+        return if (wake.isBefore(sleep)) {
+            !now.isBefore(wake) && now.isBefore(sleep)
+        } else {
+            // Waking window crosses midnight, e.g. 08:00 -> 02:00.
+            !now.isBefore(wake) || now.isBefore(sleep)
+        }
+    }
 
     /**
      * Calculates the delay in minutes until the next notification.

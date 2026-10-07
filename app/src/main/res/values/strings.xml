@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">LocalJournal</string>
+    <string name="app_name">Aside</string>
+    <string name="widget_description">Start a private Aside check-in</string>
+    <string name="widget_aside_title">Aside</string>
+    <string name="widget_check_in">Check in</string>
+    <string name="widget_accessibility">Check in with Aside</string>
 </resources>

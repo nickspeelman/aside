@@ -2,11 +2,41 @@ package com.nickspeelman.localjournal
 
 import com.nickspeelman.localjournal.data.UserSettings
 import com.nickspeelman.localjournal.notifications.NotificationScheduler
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.Calendar
 
 class NotificationSchedulerTest {
+    private val utc = ZoneId.of("UTC")
+
+    @Test
+    fun `waking window rejects delayed alarm after bedtime`() {
+        val settings = UserSettings(
+            sleepEndHour = 8,
+            sleepEndMinute = 0,
+            sleepStartHour = 22,
+            sleepStartMinute = 0
+        )
+        val delayed = ZonedDateTime.of(2026, 10, 6, 22, 15, 0, 0, utc)
+
+        assertFalse(NotificationScheduler.isWithinWakingWindow(delayed.toInstant().toEpochMilli(), settings, utc))
+    }
+
+    @Test
+    fun `waking window supports bedtime after midnight`() {
+        val settings = UserSettings(
+            sleepEndHour = 8,
+            sleepEndMinute = 0,
+            sleepStartHour = 2,
+            sleepStartMinute = 0
+        )
+        val oneAm = ZonedDateTime.of(2026, 10, 6, 1, 0, 0, 0, utc)
+
+        assertTrue(NotificationScheduler.isWithinWakingWindow(oneAm.toInstant().toEpochMilli(), settings, utc))
+    }
 
     private val settings = UserSettings(
         promptsPerDay = 4,
@@ -15,7 +45,7 @@ class NotificationSchedulerTest {
         sleepEndHour = 8, // 8 AM
         sleepEndMinute = 0,
         isPaused = false,
-        use24Hour = true
+        use24Hour = false
     )
 
     @Test

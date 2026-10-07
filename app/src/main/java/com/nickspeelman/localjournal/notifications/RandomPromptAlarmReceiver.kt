@@ -6,6 +6,8 @@ import android.content.Intent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import com.nickspeelman.localjournal.data.SettingsManager
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /** Receives both random-prompt alarms and system events that require alarms to be restored. */
@@ -19,8 +21,16 @@ class RandomPromptAlarmReceiver : BroadcastReceiver() {
                 when (intent.action) {
                     ACTION_RANDOM_PROMPT -> {
                         // Posting the notification is quick and completely local.
-                        NotificationHelper(appContext).showMoodPrompt()
-                        RandomPromptAlarmScheduler.scheduleAfterPrompt(appContext)
+                        val settingsManager = SettingsManager(appContext)
+                        val settings = settingsManager.settingsFlow.first()
+                        if (NotificationScheduler.isWithinWakingWindow(System.currentTimeMillis(), settings)) {
+                            val privacy = settingsManager.privacySettingsFlow.first()
+                            NotificationHelper(appContext).showMoodPrompt(
+                                privacy,
+                                settings.checkInNotificationTimeoutMinutes
+                            )
+                        }
+                        RandomPromptAlarmScheduler.scheduleAfterPrompt(appContext, settings)
                     }
 
                     Intent.ACTION_BOOT_COMPLETED,
@@ -40,6 +50,6 @@ class RandomPromptAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_RANDOM_PROMPT =
-            "com.nickspeelman.localjournal.action.RANDOM_PROMPT"
+            "com.nickspeelman.aside.action.RANDOM_PROMPT"
     }
 }

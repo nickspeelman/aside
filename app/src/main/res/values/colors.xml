@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- XML-side brand colors for widgets/notifications and other non-Compose UI. -->
+    <color name="sea_glass_50">#FFEEF7F4</color>
+    <color name="sea_glass_100">#FFDCEFE9</color>
+    <color name="sea_glass_200">#FFC7E4DC</color>
+    <color name="sea_glass_300">#FF9DCEBF</color>
+    <color name="sea_glass_500">#FF5FA693</color>
+    <color name="sea_glass_700">#FF347567</color>
+    <color name="sea_glass_900">#FF183F38</color>
+    <color name="sea_glass_950">#FF0D2722</color>
+    <color name="sea_glass_990">#FF081B18</color>
 </resources>

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.work.WorkManager
 import com.nickspeelman.localjournal.data.SettingsManager
+import com.nickspeelman.localjournal.data.UserSettings
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +50,7 @@ object RandomPromptAlarmScheduler {
             registerAlarm(appContext, savedTrigger)
             Log.i(TAG, "Restored existing random prompt alarm for $savedTrigger")
         } else {
-            scheduleFresh(appContext, includeCurrentWindow = true)
+            scheduleFresh(appContext, settings, includeCurrentWindow = true)
         }
     }
 
@@ -59,25 +60,37 @@ object RandomPromptAlarmScheduler {
         cancelLegacyWorkManagerSchedule(appContext)
         val settings = SettingsManager(appContext).settingsFlow.first()
 
+        reschedule(appContext, settings)
+    }
+
+    fun reschedule(context: Context, settings: UserSettings) {
+        val appContext = context.applicationContext
+
         if (settings.isPaused) {
             cancel(appContext)
         } else {
-            scheduleFresh(appContext, includeCurrentWindow = true)
+            scheduleFresh(appContext, settings, includeCurrentWindow = true)
         }
     }
 
     /** Called after a random prompt fires so the following waking window gets one prompt. */
-    suspend fun scheduleAfterPrompt(context: Context) {
+    fun scheduleAfterPrompt(context: Context, settings: UserSettings) {
         val appContext = context.applicationContext
-        cancelLegacyWorkManagerSchedule(appContext)
-        val settings = SettingsManager(appContext).settingsFlow.first()
 
         if (settings.isPaused) {
             cancel(appContext)
         } else {
-            scheduleFresh(appContext, includeCurrentWindow = false)
+            scheduleFresh(appContext, settings, includeCurrentWindow = false)
         }
     }
+
+    fun schedulingInputsChanged(old: UserSettings, new: UserSettings): Boolean =
+        old.promptsPerDay != new.promptsPerDay ||
+            old.sleepStartHour != new.sleepStartHour ||
+            old.sleepStartMinute != new.sleepStartMinute ||
+            old.sleepEndHour != new.sleepEndHour ||
+            old.sleepEndMinute != new.sleepEndMinute ||
+            old.isPaused != new.isPaused
 
     fun cancel(context: Context) {
         val appContext = context.applicationContext
@@ -92,8 +105,11 @@ object RandomPromptAlarmScheduler {
         return value.takeIf { it > 0L }
     }
 
-    private suspend fun scheduleFresh(context: Context, includeCurrentWindow: Boolean) {
-        val settings = SettingsManager(context).settingsFlow.first()
+    private fun scheduleFresh(
+        context: Context,
+        settings: UserSettings,
+        includeCurrentWindow: Boolean
+    ) {
         val now = System.currentTimeMillis()
         val delayMinutes = NotificationScheduler.calculateNextDelayMinutes(
             nowMillis = now,

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class MoodEntry(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val rating: Int,
+    val rating: Int?,
     val note: String,
     val hashtags: String, // Comma separated
     val timestamp: Long = System.currentTimeMillis()

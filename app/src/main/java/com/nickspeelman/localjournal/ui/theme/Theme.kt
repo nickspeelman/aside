@@ -1,57 +1,74 @@
 package com.nickspeelman.localjournal.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = SeaGlass300,
+    onPrimary = SeaGlass900,
+    primaryContainer = SeaGlass700,
+    onPrimaryContainer = SeaGlass50,
+    secondary = SeaGlass200,
+    onSecondary = SeaGlass900,
+    secondaryContainer = SeaGlass950,
+    onSecondaryContainer = SeaGlass100,
+    tertiary = SeaGlass500,
+    onTertiary = SeaGlass990,
+    tertiaryContainer = SeaGlass700,
+    onTertiaryContainer = SeaGlass50,
+    background = SeaGlass990,
+    onBackground = SeaGlass100,
+    surface = SeaGlass990,
+    onSurface = SeaGlass100,
+    surfaceVariant = SeaGlass950,
+    onSurfaceVariant = SeaGlassDarkMuted,
+    outline = SeaGlass500,
+    outlineVariant = SeaGlass700,
+    inverseSurface = SeaGlass100,
+    inverseOnSurface = SeaGlass900,
+    inversePrimary = SeaGlass700,
+    surfaceTint = SeaGlass300
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = SeaGlass700,
+    onPrimary = SeaGlass50,
+    primaryContainer = SeaGlass100,
+    onPrimaryContainer = SeaGlass900,
+    secondary = SeaGlass500,
+    onSecondary = SeaGlass900,
+    secondaryContainer = SeaGlass200,
+    onSecondaryContainer = SeaGlass900,
+    tertiary = SeaGlass900,
+    onTertiary = SeaGlass50,
+    tertiaryContainer = SeaGlass200,
+    onTertiaryContainer = SeaGlass900,
+    background = SeaGlass50,
+    onBackground = SeaGlass900,
+    surface = SeaGlass50,
+    onSurface = SeaGlass900,
+    surfaceVariant = SeaGlass100,
+    onSurfaceVariant = SeaGlassMuted,
+    outline = SeaGlass700,
+    outlineVariant = SeaGlass200,
+    inverseSurface = SeaGlass900,
+    inverseOnSurface = SeaGlass50,
+    inversePrimary = SeaGlass300,
+    surfaceTint = SeaGlass700
 )
 
 @Composable
 fun LocalJournalTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
+    // Dynamic color is intentionally not used: Aside should remain visually quiet
+    // and recognizable instead of inheriting a potentially saturated system palette.
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme,
         typography = Typography,
         content = content
     )

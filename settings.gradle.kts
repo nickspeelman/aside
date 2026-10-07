@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LocalJournal"
+rootProject.name = "Aside"
 include(":app")
