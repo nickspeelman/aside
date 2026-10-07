@@ -66,7 +66,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nickspeelman.aside"
+        applicationId = "com.nickspeelman.localjournal"
         minSdk = 26
         targetSdk = 37
         versionCode = 25

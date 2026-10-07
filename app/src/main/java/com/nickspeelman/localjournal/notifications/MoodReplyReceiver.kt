@@ -247,9 +247,9 @@ class MoodReplyReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_SET_RATING =
-            "com.nickspeelman.aside.action.SET_NOTIFICATION_RATING"
+            "com.nickspeelman.localjournal.action.SET_NOTIFICATION_RATING"
         const val ACTION_ADD_NOTE =
-            "com.nickspeelman.aside.action.ADD_NOTIFICATION_NOTE"
+            "com.nickspeelman.localjournal.action.ADD_NOTIFICATION_NOTE"
         const val EXTRA_RATING = "notification_rating"
         const val EXTRA_ENTRY_ID = "notification_entry_id"
         private const val NO_ENTRY_ID = -1

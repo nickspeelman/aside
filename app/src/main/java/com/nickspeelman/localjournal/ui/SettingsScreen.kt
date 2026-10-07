@@ -56,6 +56,17 @@ fun SettingsScreen(
     val isDebuggable = remember(context) {
         context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
+    val appVersionLabel = remember(context) {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo.versionName ?: "Unknown"
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode.toLong()
+        }
+        "$versionName ($versionCode)"
+    }
 
     var promptsPerDay by remember(settings) { mutableIntStateOf(settings.promptsPerDay) }
     var sleepStartHour by remember(settings) { mutableIntStateOf(settings.sleepStartHour) }
@@ -748,6 +759,19 @@ fun SettingsScreen(
                             use24Hour = it
                             persistCurrentSettings()
                         }
+                    )
+                }
+                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Version", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = appVersionLabel,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

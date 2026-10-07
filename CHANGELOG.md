@@ -36,5 +36,5 @@ Aside is currently alpha software. Privacy- and data-safety-related changes are 
 - Added the in-app link to the public, version-controlled privacy policy.
 
 ### Distribution
-- Changed the permanent Play application ID to `com.nickspeelman.aside` before the first Play alpha.
+- Changed the permanent Play application ID to `com.nickspeelman.localjournal` before the first Play alpha.
 - Added keystore/crash/local-build artifacts to `.gitignore` and removed local build artifacts from the distributable project.

@@ -50,6 +50,6 @@ class RandomPromptAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_RANDOM_PROMPT =
-            "com.nickspeelman.aside.action.RANDOM_PROMPT"
+            "com.nickspeelman.localjournal.action.RANDOM_PROMPT"
     }
 }
