@@ -38,3 +38,11 @@ Aside is currently alpha software. Privacy- and data-safety-related changes are 
 ### Distribution
 - Changed the permanent Play application ID to `com.nickspeelman.localjournal` before the first Play alpha.
 - Added keystore/crash/local-build artifacts to `.gitignore` and removed local build artifacts from the distributable project.
+
+## 2.0.0-alpha8.1
+
+### Fixes
+- Fixed the drawing area so input remains within the intended bounds.
+
+### Codex support
+- Added AGENTS.md, DESIGN_PRINCIPLES.md, VERSIONING.md
