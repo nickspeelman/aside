@@ -4,6 +4,7 @@ import com.nickspeelman.localjournal.data.MoodEntry
 import com.nickspeelman.localjournal.data.UserSettings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
@@ -64,7 +65,29 @@ class RangeReportAnalyticsTest {
         assertTrue(report.timeBuckets.size >= 2)
     }
 
-    private fun entry(rating: Int, localDateTime: String, hashtags: String = ""): MoodEntry {
+    @Test
+    fun noteOnlyCheckIns_contributeToPeriodHashtagsWithoutInventingMoodAverage() {
+        val entries = listOf(
+            entry(4, "2026-09-19T09:00", "#rated"),
+            entry(3, "2026-09-20T09:00", "#rated"),
+            entry(null, "2026-09-21T09:00", "#notes"),
+            entry(null, "2026-09-22T09:00", "#notes")
+        )
+
+        val report = RangeReportAnalytics.build(
+            entries,
+            settings,
+            LocalDate.of(2026, 9, 19),
+            LocalDate.of(2026, 9, 25),
+            zone
+        )!!
+
+        assertEquals(listOf("#notes", "#rated"), report.hashtags.map { it.tag })
+        assertNull(report.hashtags.first { it.tag == "#notes" }.average)
+        assertEquals(3.5, report.hashtags.first { it.tag == "#rated" }.average!!, 0.001)
+    }
+
+    private fun entry(rating: Int?, localDateTime: String, hashtags: String = ""): MoodEntry {
         val millis = LocalDateTime.parse(localDateTime).atZone(zone).toInstant().toEpochMilli()
         return MoodEntry(rating = rating, note = "", hashtags = hashtags, timestamp = millis)
     }

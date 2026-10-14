@@ -20,7 +20,7 @@ import kotlin.math.round
 object RangeReportAnalytics {
 
     data class DayHighlight(val date: LocalDate, val average: Double)
-    data class HashtagValue(val tag: String, val average: Double, val count: Int)
+    data class HashtagValue(val tag: String, val average: Double?, val count: Int)
     data class TimeBucket(
         val start: LocalTime,
         val end: LocalTime,
@@ -54,9 +54,10 @@ object RangeReportAnalytics {
     ): Report? {
         if (endDate.isBefore(startDate)) return null
 
-        val currentEntries = entries.filter { entry ->
-            entry.rating != null && entry.localDate(zoneId) in startDate..endDate
+        val allCurrentEntries = entries.filter { entry ->
+            entry.localDate(zoneId) in startDate..endDate
         }
+        val currentEntries = allCurrentEntries.filter { it.rating != null }
         if (currentEntries.isEmpty()) return null
 
         val periodDays = (ChronoUnit.DAYS.between(startDate, endDate) + 1).coerceAtLeast(1)
@@ -83,20 +84,27 @@ object RangeReportAnalytics {
             checkInCount = currentEntries.size,
             highest = highest,
             lowest = lowest,
-            hashtags = topHashtags(currentEntries),
+            // Hashtags describe the whole period, including note-only check-ins. Their mood
+            // averages still use only the entries that actually have a rating.
+            hashtags = topHashtags(allCurrentEntries),
             timeBuckets = interestingTimeBuckets(currentEntries, settings, zoneId)
         )
     }
 
     private fun topHashtags(entries: List<MoodEntry>): List<HashtagValue> {
-        val overall = entries.mapNotNull { it.rating }.average()
+        val overall = entries.mapNotNull { it.rating }.averageOrNull()
         return HashtagAnalytics.snapshot(entries).stats.mapNotNull { stat ->
-            val average = stat.averageRating ?: return@mapNotNull null
-            if (stat.ratedEntryCount < MIN_HASHTAG_COUNT) null
-            else HashtagValue(stat.tag, average, stat.entryCount)
+            if (stat.entryCount < MIN_HASHTAG_COUNT) null
+            else HashtagValue(stat.tag, stat.averageRating, stat.entryCount)
         }.sortedWith(
             compareByDescending<HashtagValue> { it.count }
-                .thenByDescending { abs(it.average - overall) }
+                .thenByDescending { hashtag ->
+                    if (hashtag.average != null && overall != null) {
+                        abs(hashtag.average - overall)
+                    } else {
+                        Double.NEGATIVE_INFINITY
+                    }
+                }
                 .thenBy { it.tag }
         ).take(2)
     }

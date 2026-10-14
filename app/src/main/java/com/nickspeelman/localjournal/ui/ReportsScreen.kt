@@ -368,8 +368,11 @@ private fun PeriodSummaryCard(
             if (report.hashtags.isNotEmpty()) {
                 Text("Top hashtags", style = MaterialTheme.typography.labelLarge)
                 report.hashtags.forEach { hashtag ->
+                    val average = hashtag.average?.let {
+                        String.format(Locale.getDefault(), "%.1f", it)
+                    } ?: "no mood average"
                     Text(
-                        "${hashtag.tag}  ${String.format(Locale.getDefault(), "%.1f", hashtag.average)} · ${hashtag.count}",
+                        "${hashtag.tag}  $average · ${hashtag.count}",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

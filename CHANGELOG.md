@@ -2,6 +2,16 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.3
+
+### Fixes
+- Made in-app and exported period summaries count hashtags from note-only check-ins consistently, with an explicit label when a tag has no mood average.
+
+## 2.0.0-alpha8.2
+
+### Fixes
+- Kept an in-progress check-in open through screen rotation, including its selected rating and draft note.
+
 ## 2.0.0-alpha8 — pre-alpha hardening
 
 ### Privacy and security

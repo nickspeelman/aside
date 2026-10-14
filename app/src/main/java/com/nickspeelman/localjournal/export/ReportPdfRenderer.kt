@@ -66,7 +66,12 @@ object ReportPdfRenderer {
         }
         if (report.hashtags.isNotEmpty()) {
             text("Top hashtags", 16f, true, FG, 3f)
-            report.hashtags.forEach { text("${it.tag} · ${String.format(Locale.getDefault(), "%.1f", it.average)} · ${it.count}", 12f, false, FG, 1f) }
+            report.hashtags.forEach {
+                val average = it.average?.let { value ->
+                    String.format(Locale.getDefault(), "%.1f", value)
+                } ?: "no mood average"
+                text("${it.tag} · $average · ${it.count}", 12f, false, FG, 1f)
+            }
             y += 8f
         }
         if (report.notes.isNotEmpty()) {

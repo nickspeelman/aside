@@ -22,7 +22,7 @@ data class ShareableChart(
 
 enum class ReportExportKind { WEEKLY, MONTHLY, RANGE }
 
-data class ExportHashtag(val tag: String, val average: Double, val count: Int)
+data class ExportHashtag(val tag: String, val average: Double?, val count: Int)
 data class ExportTimeBucket(val label: String, val average: Double, val count: Int)
 data class ExportHighlight(val label: String, val average: Double)
 data class ExportNote(val dateTime: LocalDateTime, val rating: Int?, val note: String)

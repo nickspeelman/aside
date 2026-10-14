@@ -56,6 +56,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -396,10 +397,12 @@ private fun MainScreen(
         mutableStateOf(notificationHelper.canPostNotifications())
     }
 
-    var showAddEntryDialog by remember { mutableStateOf(false) }
-    var notificationEntryDialogActive by remember { mutableStateOf(false) }
-    var manualEntryRating by remember { mutableStateOf<Int?>(null) }
-    var manualEntryText by remember { mutableStateOf("") }
+    // A configuration change (including rotation) recreates the Activity after the notification
+    // request has been consumed. Save the capture state so an in-progress check-in stays open.
+    var showAddEntryDialog by rememberSaveable { mutableStateOf(false) }
+    var notificationEntryDialogActive by rememberSaveable { mutableStateOf(false) }
+    var manualEntryRating by rememberSaveable { mutableStateOf<Int?>(null) }
+    var manualEntryText by rememberSaveable { mutableStateOf("") }
     var notificationNoteText by remember { mutableStateOf("") }
     var historyFilter by remember { mutableStateOf<HistoryFilter?>(null) }
     var hashtagTrendTag by remember { mutableStateOf<String?>(null) }
