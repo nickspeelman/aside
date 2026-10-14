@@ -2,6 +2,12 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.4
+
+### Reliability
+- Fixed the period-summary hashtag test so it validates note-only statistics without depending on presentation order.
+- Updated the Android CI actions to supported Node.js 24–based releases while retaining GitHub-hosted Gradle caching.
+
 ## 2.0.0-alpha8.3
 
 ### Fixes

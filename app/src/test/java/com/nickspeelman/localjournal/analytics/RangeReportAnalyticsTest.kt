@@ -82,9 +82,10 @@ class RangeReportAnalyticsTest {
             zone
         )!!
 
-        assertEquals(listOf("#notes", "#rated"), report.hashtags.map { it.tag })
-        assertNull(report.hashtags.first { it.tag == "#notes" }.average)
-        assertEquals(3.5, report.hashtags.first { it.tag == "#rated" }.average!!, 0.001)
+        val hashtagsByTag = report.hashtags.associateBy { it.tag }
+        assertEquals(setOf("#notes", "#rated"), hashtagsByTag.keys)
+        assertNull(hashtagsByTag.getValue("#notes").average)
+        assertEquals(3.5, hashtagsByTag.getValue("#rated").average!!, 0.001)
     }
 
     private fun entry(rating: Int?, localDateTime: String, hashtags: String = ""): MoodEntry {
