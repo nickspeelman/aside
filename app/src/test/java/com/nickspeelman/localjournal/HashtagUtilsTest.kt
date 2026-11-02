@@ -30,7 +30,7 @@ class HashtagUtilsTest {
     @Test
     fun activeHashtag_findsTagAtCursorAndIncludesExistingSuffix() {
         assertEquals(
-            HashtagUtils.ActiveHashtag(6, 15, "#fri"),
+            HashtagUtils.ActiveHashtag(6, 14, "#fri"),
             HashtagUtils.activeHashtag("hello #friends today", 10)
         )
         assertEquals(null, HashtagUtils.activeHashtag("hello friends", 8))
