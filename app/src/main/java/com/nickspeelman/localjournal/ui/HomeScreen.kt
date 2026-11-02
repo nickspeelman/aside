@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -203,6 +202,7 @@ fun AddMoodEntryDialog(
     input: String,
     onRatingChange: (Int?) -> Unit,
     onInputChange: (String) -> Unit,
+    knownHashtags: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onSave: () -> Unit
 ) {
@@ -256,11 +256,11 @@ fun AddMoodEntryDialog(
                     Text("1 · worst", style = MaterialTheme.typography.labelSmall)
                     Text("5 · best", style = MaterialTheme.typography.labelSmall)
                 }
-                OutlinedTextField(
+                HashtagSuggestionTextField(
                     value = input,
                     onValueChange = onInputChange,
+                    knownHashtags = knownHashtags,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Optional note or #tags") },
                     minLines = 2,
                     maxLines = 4
                 )
@@ -288,6 +288,7 @@ fun AddNoteToSavedEntryDialog(
     rating: Int,
     input: String,
     onInputChange: (String) -> Unit,
+    knownHashtags: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onSave: () -> Unit
 ) {
@@ -304,15 +305,14 @@ fun AddNoteToSavedEntryDialog(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text("Add an optional note or #tags to this check-in.")
-                OutlinedTextField(
+                HashtagSuggestionTextField(
                     value = input,
                     onValueChange = onInputChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                    placeholder = { Text("Optional note or #tags") },
+                    knownHashtags = knownHashtags,
+                    modifier = Modifier.fillMaxWidth(),
                     minLines = 2,
-                    maxLines = 5
+                    maxLines = 5,
+                    focusRequester = focusRequester
                 )
             }
         },

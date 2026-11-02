@@ -10,7 +10,6 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -40,6 +39,7 @@ import java.util.Locale
 fun EditEntryDialog(
     entry: MoodEntry,
     use24Hour: Boolean,
+    knownHashtags: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onSave: (MoodEntry) -> Unit
 ) {
@@ -152,11 +152,11 @@ fun EditEntryDialog(
                 }
 
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
+                HashtagSuggestionTextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Note") },
-                    placeholder = { Text("Optional note or #tags") },
+                    knownHashtags = knownHashtags,
+                    label = "Note",
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 2,
                     maxLines = 5

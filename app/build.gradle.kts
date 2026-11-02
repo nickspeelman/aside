@@ -69,8 +69,8 @@ android {
         applicationId = "com.nickspeelman.localjournal"
         minSdk = 26
         targetSdk = 37
-        versionCode = 29
-        versionName = "2.0.0-alpha8.4"
+        versionCode = 30
+        versionName = "2.0.0-alpha8.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

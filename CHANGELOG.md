@@ -2,6 +2,11 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.5
+
+### User experience
+- Added local suggestions from previously used hashtags while writing or editing a journal entry, helping keep tag names consistent.
+
 ## 2.0.0-alpha8.4
 
 ### Reliability

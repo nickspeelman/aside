@@ -81,6 +81,7 @@ import com.nickspeelman.localjournal.analytics.WeeklyReportAnalytics
 import com.nickspeelman.localjournal.data.AsideBackupCodec
 import com.nickspeelman.localjournal.data.JournalCsvExporter
 import com.nickspeelman.localjournal.data.JournalFileIO
+import com.nickspeelman.localjournal.data.HashtagUtils
 import com.nickspeelman.localjournal.data.MoodDatabase
 import com.nickspeelman.localjournal.data.MoodEntry
 import com.nickspeelman.localjournal.data.MoodRepository
@@ -380,6 +381,9 @@ private fun MainScreen(
 ) {
     val navController = rememberNavController()
     val entries by viewModel.allEntries.collectAsState()
+    val knownHashtags = remember(entries) {
+        entries.flatMap { HashtagUtils.parse(it.hashtags) }.distinct()
+    }
     val summary by viewModel.summaryData.collectAsState()
     val userSettings by viewModel.settings.collectAsState()
     val privacyIntroPending by viewModel.privacyIntroPending.collectAsState()
@@ -1206,6 +1210,7 @@ private fun MainScreen(
         AddNoteToSavedEntryDialog(
             rating = request.rating,
             input = notificationNoteText,
+            knownHashtags = knownHashtags,
             onInputChange = { notificationNoteText = it },
             onDismiss = {
                 notificationNoteText = ""
@@ -1229,6 +1234,7 @@ private fun MainScreen(
         AddMoodEntryDialog(
             rating = manualEntryRating,
             input = manualEntryText,
+            knownHashtags = knownHashtags,
             onRatingChange = { manualEntryRating = it },
             onInputChange = { manualEntryText = it },
             onDismiss = {
@@ -1257,6 +1263,7 @@ private fun MainScreen(
             EditEntryDialog(
                 entry = entry,
                 use24Hour = userSettings.use24Hour,
+                knownHashtags = knownHashtags,
                 onDismiss = { editingEntry = null },
                 onSave = { updated ->
                     editingEntry = null
