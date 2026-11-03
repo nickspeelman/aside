@@ -2,6 +2,11 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.7
+
+### User experience
+- Matched the beta-feedback and usage-statistics actions with parallel explanations, review-focused button labels, and the same reminder that every line can be edited before sending.
+
 ## 2.0.0-alpha8.6
 
 ### Features

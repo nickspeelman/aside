@@ -783,12 +783,12 @@ fun SettingsScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Send beta feedback", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
-                Text("Aside will include: app version and build type, Android version/API level, device manufacturer/model, and whether notifications are permitted.")
+                Text("Optionally share app version and build type, Android version/API level, device manufacturer/model, and whether notifications are permitted.")
                 Spacer(Modifier.height(10.dp))
-                Text("Aside will not automatically include journal entries, notes, mood ratings or history, hashtags, backups, exported reports, or private logs.", style = MaterialTheme.typography.bodyMedium)
+                Text("The prepared email does not include journal entries, notes, mood ratings or history, hashtags, backups, exported reports, or private logs.", style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(12.dp))
-                Button(onClick = onBetaFeedback, modifier = Modifier.fillMaxWidth()) { Text("Send feedback") }
-                Text("You can review and edit the message before sending it through another app.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
+                Button(onClick = onBetaFeedback, modifier = Modifier.fillMaxWidth()) { Text("Review feedback email") }
+                Text("You can review and edit every line before sending it through another app.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
             }
         }
         Spacer(Modifier.height(12.dp))
@@ -798,7 +798,7 @@ fun SettingsScreen(
                 Spacer(Modifier.height(8.dp))
                 Text("Optionally share aggregate entry counts, recent activity counts, feature settings, app/device information, and backup status.")
                 Spacer(Modifier.height(10.dp))
-                Text("No journal text, hashtag values, mood values, entry dates or times, identifiers, or private logs are included.", style = MaterialTheme.typography.bodyMedium)
+                Text("The prepared email does not include journal text, hashtag values, mood values, entry dates or times, identifiers, or private logs.", style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = onSendUsageStatistics,
