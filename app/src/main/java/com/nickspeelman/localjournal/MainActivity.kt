@@ -104,6 +104,7 @@ import com.nickspeelman.localjournal.privacy.PrivacySummaryBuilder
 import com.nickspeelman.localjournal.security.AuthenticationCoordinator
 import com.nickspeelman.localjournal.security.applyAsideWindowPrivacy
 import com.nickspeelman.localjournal.feedback.BetaFeedback
+import com.nickspeelman.localjournal.feedback.UsageStatistics
 import com.nickspeelman.localjournal.startup.InstallStateResolver
 import com.nickspeelman.localjournal.ui.AddMoodEntryDialog
 import com.nickspeelman.localjournal.ui.AddNoteToSavedEntryDialog
@@ -1160,7 +1161,30 @@ private fun MainScreen(
                             }
                         }
                     },
-                    onBetaFeedback = { BetaFeedback.launch(context) },
+                    onBetaFeedback = {
+                        if (!BetaFeedback.launch(context)) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("No email app is available")
+                            }
+                        }
+                    },
+                    onSendUsageStatistics = {
+                        if (canReadJournal) {
+                            val opened = UsageStatistics.launch(
+                                context = context,
+                                entries = entries,
+                                settings = userSettings,
+                                privacy = privacySettings,
+                                backupPolicy = backupPolicy,
+                                backupState = backupState
+                            )
+                            if (!opened) {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("No email app is available")
+                                }
+                            }
+                        }
+                    },
                     onSettingsChanged = { newSettings ->
                         scope.launch {
                             val oldSettings = userSettings

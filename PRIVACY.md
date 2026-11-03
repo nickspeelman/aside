@@ -7,7 +7,7 @@ permalink: /privacy/
 # Aside Privacy Policy
 
 **Effective date: October 7, 2026**  
-**Last updated: October 7, 2026**
+**Last updated: November 3, 2026**
 
 Aside is developed and maintained by Nick Speelman. Aside is designed so that the developer does not need to receive your journal data in order for the app to work. This privacy policy is maintained in the same public source repository as Aside so changes to it can be reviewed through the repository's commit history.
 
@@ -32,7 +32,7 @@ Aside's release build does **not** request `android.permission.INTERNET`. The re
 
 Aside does not include advertising SDKs, analytics/tracking SDKs, or an automatic crash-reporting service.
 
-Some actions intentionally hand information to another app that you choose. For example, opening this privacy policy launches a web browser, sending beta feedback launches an email/share app, and sharing an export launches Android's share interface. Those other apps and services have their own privacy practices and network permissions.
+Some actions intentionally hand information to another app that you choose. For example, opening this privacy policy launches a web browser, preparing beta feedback or optional usage statistics launches an email app, and sharing an export launches Android's share interface. Those other apps and services have their own privacy practices and network permissions.
 
 ## Journal data and device storage
 
@@ -66,11 +66,17 @@ Aside's notification channels are configured to be silent by default. Users can 
 
 ## Beta feedback and support
 
-If you choose **Send beta feedback**, Aside prepares a message containing limited technical information such as the Aside version/build type, Android version/API level, device manufacturer/model, and whether notifications are permitted. The message is opened in an external email/share app so you can review and edit it before deciding whether to send it.
+If you choose **Send beta feedback**, Aside prepares a message containing limited technical information such as the Aside version/build type, Android version/API level, device manufacturer/model, and whether notifications are permitted. The message is opened in an external email app so you can review and edit it before deciding whether to send it.
 
 Aside does not automatically include journal entries, notes, mood ratings/history, hashtags, backups, exported reports, or private logs in beta feedback.
 
 If you contact support yourself, information you include in that message is handled by the email/provider services involved in sending and receiving it.
+
+## Optional usage statistics
+
+If you choose **Share usage statistics**, Aside calculates a reviewable email on your device. It can include app/device information; aggregate counts such as total, recent, rated, note-only, note-containing, and hashtag-containing entries; a coarse journal time-span category; feature-setting states; and backup-status states.
+
+The prepared statistics do not include journal text, hashtag values, mood values, entry dates or times, stable device or user identifiers, locale/time zone, exact backup dates, or private logs. Aside opens the draft in an external email app, where you can review, edit, or abandon it. Aside does not send these statistics automatically and does not retain a separate analytics history.
 
 ## Data retention and deletion
 

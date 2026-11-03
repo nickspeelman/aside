@@ -2,6 +2,16 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.6
+
+### Features
+- Added an optional, user-initiated email for sharing aggregate usage statistics with the developer.
+- Feedback and optional statistics now open as addressed email drafts rather than through the general Android share interface.
+
+### Privacy and security
+- Usage statistics are calculated locally and remain reviewable before sending; journal text, hashtag values, mood values, entry dates/times, stable identifiers, and private logs are excluded.
+- Preparing journal-derived statistics requires the protected journal to be unlocked and does not add Internet permission, telemetry, or an analytics SDK.
+
 ## 2.0.0-alpha8.5
 
 ### User experience

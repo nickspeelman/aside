@@ -50,6 +50,7 @@ fun SettingsScreen(
     onSendTestWeeklyReport: (Long) -> Unit,
     onSendTestMonthlyReport: (Long) -> Unit,
     onBetaFeedback: () -> Unit,
+    onSendUsageStatistics: () -> Unit,
     onSettingsChanged: (UserSettings) -> Unit
 ) {
     val context = LocalContext.current
@@ -281,8 +282,8 @@ fun SettingsScreen(
                 onClick = { settingsSection = SettingsSection.GENERAL }
             )
             SettingsMenuCard(
-                title = "Beta feedback",
-                subtitle = "Report a problem or share an idea",
+                title = "Feedback & statistics",
+                subtitle = "Share only what you choose",
                 onClick = { settingsSection = SettingsSection.FEEDBACK }
             )
             SettingsMenuCard(
@@ -790,6 +791,32 @@ fun SettingsScreen(
                 Text("You can review and edit the message before sending it through another app.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp))
             }
         }
+        Spacer(Modifier.height(12.dp))
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Share usage statistics", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.height(8.dp))
+                Text("Optionally share aggregate entry counts, recent activity counts, feature settings, app/device information, and backup status.")
+                Spacer(Modifier.height(10.dp))
+                Text("No journal text, hashtag values, mood values, entry dates or times, identifiers, or private logs are included.", style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(12.dp))
+                Button(
+                    onClick = onSendUsageStatistics,
+                    enabled = canRevealJournalMetadata,
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text("Review statistics email") }
+                Text(
+                    text = if (canRevealJournalMetadata) {
+                        "You can review and edit every line before sending it through another app."
+                    } else {
+                        "Unlock your journal before preparing aggregate journal statistics."
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 6.dp)
+                )
+            }
+        }
                 }
                 SettingsSection.TESTING -> {
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -869,7 +896,7 @@ private enum class SettingsSection(val title: String) {
     REPORTS("Reports"),
     DATA("Data & backup"),
     GENERAL("General"),
-    FEEDBACK("Beta feedback"),
+    FEEDBACK("Feedback & statistics"),
     TESTING("Testing")
 }
 

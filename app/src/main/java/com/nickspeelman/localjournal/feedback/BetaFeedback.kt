@@ -1,14 +1,12 @@
 package com.nickspeelman.localjournal.feedback
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 
 object BetaFeedback {
-    const val ADDRESS = "asidehelp@nickspeelman.com"
+    const val ADDRESS = "nick@nickspeelman.com"
 
     fun body(context: Context): String {
         val notifications = if (NotificationManagerCompat.from(context).areNotificationsEnabled()) "Yes" else "No"
@@ -38,22 +36,9 @@ Notifications permitted: $notifications
 """.trimEnd()
     }
 
-    fun launch(context: Context) {
+    fun launch(context: Context): Boolean {
         val subject = "Aside beta feedback"
         val body = body(context)
-        val mailUri = Uri.parse(
-            "mailto:$ADDRESS?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}"
-        )
-        val mail = Intent(Intent.ACTION_SENDTO, mailUri)
-        if (mail.resolveActivity(context.packageManager) != null) {
-            context.startActivity(mail)
-        } else {
-            val share = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, subject)
-                putExtra(Intent.EXTRA_TEXT, "$subject\n\nTo: $ADDRESS\n\n$body")
-            }
-            context.startActivity(Intent.createChooser(share, "Send beta feedback"))
-        }
+        return EmailDraftLauncher.launch(context, ADDRESS, subject, body)
     }
 }
