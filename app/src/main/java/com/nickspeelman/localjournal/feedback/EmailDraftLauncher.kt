@@ -7,7 +7,9 @@ import android.net.Uri
 
 object EmailDraftLauncher {
     fun launch(context: Context, address: String, subject: String, body: String): Boolean {
-        val mailUri = Uri.parse("mailto:$address")
+        val mailUri = Uri.parse(
+            "mailto:$address?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}"
+        )
         val intent = Intent(Intent.ACTION_SENDTO, mailUri).apply {
             putExtra(Intent.EXTRA_EMAIL, arrayOf(address))
             putExtra(Intent.EXTRA_SUBJECT, subject)
