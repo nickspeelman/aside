@@ -184,7 +184,7 @@ class NotificationHelper(private val context: Context) {
         ).also { bindRatingButtons(it, privacy, timeoutMinutes) }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_PROMPT_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("How are you feeling?")
             .setContentText("1 = worst, 5 = best. Add a note if you want.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -221,7 +221,7 @@ class NotificationHelper(private val context: Context) {
         }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_PROMPT_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("Saving $rating / 5…")
             .setContentText("Your check-in is being saved.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -268,7 +268,7 @@ class NotificationHelper(private val context: Context) {
         }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_PROMPT_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("$rating / 5 saved")
             .setContentText("Tap to add a note or #tags.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -316,7 +316,7 @@ class NotificationHelper(private val context: Context) {
         timeoutMinutes: Int = 0
     ): Notification {
         val builder = NotificationCompat.Builder(context, CHANNEL_PROMPT_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("Aside check-in")
             .setContentText(text)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -433,7 +433,7 @@ class NotificationHelper(private val context: Context) {
                     .coerceAtMost(640)
                 val dashboard = WeeklyReportRenderer.render(report, settings, dashboardWidthPx)
                 NotificationCompat.Builder(context, CHANNEL_SUMMARY_ID)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
+                    .setSmallIcon(R.drawable.ic_notification_aside)
                     .setContentTitle("Weekly report · ${WeeklyReportRenderer.headline(report)}")
                     .setContentText("${report.checkInCount} check-ins$previousText")
                     .setStyle(
@@ -497,7 +497,7 @@ class NotificationHelper(private val context: Context) {
                     .coerceAtMost(640)
                 val dashboard = MonthlyReportRenderer.render(report, settings, dashboardWidthPx)
                 NotificationCompat.Builder(context, CHANNEL_SUMMARY_ID)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
+                    .setSmallIcon(R.drawable.ic_notification_aside)
                     .setContentTitle("Monthly report · ${MonthlyReportRenderer.headline(report)}")
                     .setContentText("${report.checkInCount} check-ins$previousText")
                     .setStyle(
@@ -533,7 +533,7 @@ class NotificationHelper(private val context: Context) {
         privacy: PrivacySettings
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, CHANNEL_SUMMARY_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("Your $reportType report is ready")
             .setContentText("Open Aside to view it.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -549,7 +549,7 @@ class NotificationHelper(private val context: Context) {
         privacy: PrivacySettings
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, CHANNEL_SUMMARY_ID)
-            .setSmallIcon(android.R.drawable.stat_notify_chat)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("Your $reportType report is ready")
             .setContentText("Open Aside to view it.")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -577,7 +577,7 @@ class NotificationHelper(private val context: Context) {
         }
         val pending = PendingIntent.getActivity(context, 104, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(context, CHANNEL_BACKUP_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification_aside)
             .setContentTitle("Time to update your backup")
             .setContentText("Your journal has changed since your last backup.")
             .setContentIntent(pending).setAutoCancel(true).setLocalOnly(true)

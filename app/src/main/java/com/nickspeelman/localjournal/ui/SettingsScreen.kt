@@ -41,6 +41,7 @@ fun SettingsScreen(
     privacyStatusSubtitle: String?,
     onOpenPrivacy: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
+    onOpenCommitments: () -> Unit,
     onExportJournal: () -> Unit,
     onBackupJournal: () -> Unit,
     onBackupReminderChanged: (Boolean, Int) -> Unit,
@@ -290,6 +291,11 @@ fun SettingsScreen(
                 title = "Privacy policy",
                 subtitle = "Public policy with revision history",
                 onClick = onOpenPrivacyPolicy
+            )
+            SettingsMenuCard(
+                title = "Our commitments",
+                subtitle = "What Aside promises—and how you can check",
+                onClick = onOpenCommitments
             )
             if (isDebuggable) {
                 SettingsMenuCard(

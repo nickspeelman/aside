@@ -26,7 +26,7 @@ data class UsageStatisticsSnapshot(
 )
 
 object UsageStatistics {
-    const val ADDRESS = "nick@nickspeelman.com"
+    const val ADDRESS = "asidehelp@nickspeelman.com"
 
     fun snapshot(
         entries: List<MoodEntry>,

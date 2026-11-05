@@ -2,6 +2,34 @@
 
 Aside is currently alpha software. Privacy- and data-safety-related changes are called out explicitly rather than hidden inside generic maintenance notes.
 
+## 2.0.0-alpha8.12
+
+### User experience
+- Made manual entries easier to discover with labeled Check in actions throughout the main app sections.
+- Added clear Home guidance until the first manual check-in, then returned the interface to its quieter everyday state.
+
+## 2.0.0-alpha8.11
+
+### Visual identity
+- Inset and recentered the comma mark so its full silhouette remains visible through Android launcher masks and inside notification-icon bounds.
+
+## 2.0.0-alpha8.10
+
+### Visual identity
+- Refined the comma mark into a natural rounded form without the squared upper cap.
+
+## 2.0.0-alpha8.9
+
+### Visual identity
+- Replaced the Android template launcher art with Aside's serif-comma mark in the established sea-glass palette.
+- Added the comma as the monochrome themed-app icon and as the status-bar icon for check-ins, reports, and backup reminders.
+
+## 2.0.0-alpha8.8
+
+### User experience
+- Added an in-app link to Aside's public, version-controlled commitments alongside the privacy policy.
+- Updated beta-feedback and optional usage-statistics email drafts to use the dedicated Aside support address.
+
 ## 2.0.0-alpha8.7
 
 ### User experience

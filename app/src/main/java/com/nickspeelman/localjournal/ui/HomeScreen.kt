@@ -2,6 +2,8 @@ package com.nickspeelman.localjournal.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowForward
@@ -26,12 +28,15 @@ import java.util.Locale
 fun HomeScreen(
     summary: MoodAnalytics.HomeSummary,
     entryCount: Int,
+    showManualCheckInGuidance: Boolean,
+    onCheckIn: () -> Unit,
     onHashtagClick: (String) -> Unit = {},
     onViewAllHashtags: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -40,6 +45,30 @@ fun HomeScreen(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 20.dp)
         )
+
+        if (showManualCheckInGuidance) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("Check in anytime", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "You don’t need to wait for a notification. Use Check in whenever you want to make an entry.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Button(onClick = onCheckIn) {
+                        Text("Make a check-in")
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         if (entryCount == 0) {
             Card(modifier = Modifier.fillMaxWidth()) {

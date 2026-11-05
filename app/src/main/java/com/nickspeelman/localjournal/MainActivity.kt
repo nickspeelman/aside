@@ -34,7 +34,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -136,6 +136,7 @@ private data class NotificationNoteRequest(
 )
 
 private const val PRIVACY_POLICY_URL = "https://nickspeelman.github.io/aside/privacy/"
+private const val COMMITMENTS_URL = "https://github.com/nickspeelman/aside/blob/main/COMMITMENTS.md"
 
 class MainActivity : FragmentActivity() {
     private lateinit var authenticationCoordinator: AuthenticationCoordinator
@@ -387,6 +388,7 @@ private fun MainScreen(
     }
     val summary by viewModel.summaryData.collectAsState()
     val userSettings by viewModel.settings.collectAsState()
+    val manualCheckInCompleted by viewModel.manualCheckInCompleted.collectAsState()
     val privacyIntroPending by viewModel.privacyIntroPending.collectAsState()
     val backupState by viewModel.manualBackupState.collectAsState()
 
@@ -735,10 +737,12 @@ private fun MainScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             // Capture stays available even while journal reading is locked.
-            if (currentRoute == "home") {
-                FloatingActionButton(onClick = { showAddEntryDialog = true }) {
-                    Icon(Icons.Default.Add, contentDescription = "Add entry")
-                }
+            if (currentRoute in setOf("home", "history", "reports", "settings")) {
+                ExtendedFloatingActionButton(
+                    onClick = { showAddEntryDialog = true },
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                    text = { Text("Check in") }
+                )
             }
         },
         bottomBar = {
@@ -817,6 +821,8 @@ private fun MainScreen(
                     HomeScreen(
                         summary = summary,
                         entryCount = entries.size,
+                        showManualCheckInGuidance = !manualCheckInCompleted,
+                        onCheckIn = { showAddEntryDialog = true },
                         onHashtagClick = { tag ->
                             historyFilter = HistoryFilter.Hashtag(tag)
                             navController.navigate("history") { launchSingleTop = true }
@@ -955,6 +961,21 @@ private fun MainScreen(
                         if (result.isFailure) {
                             scope.launch {
                                 snackbarHostState.showSnackbar("Couldn't open the privacy policy")
+                            }
+                        }
+                    },
+                    onOpenCommitments = {
+                        val result = runCatching {
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(COMMITMENTS_URL)
+                                )
+                            )
+                        }
+                        if (result.isFailure) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Couldn't open the commitments")
                             }
                         }
                     },
@@ -1270,12 +1291,14 @@ private fun MainScreen(
             onSave = {
                 val ratingToSave = manualEntryRating
                 val contentToSave = manualEntryText
+                val wasManualCheckIn = !notificationEntryDialogActive
                 showAddEntryDialog = false
                 notificationEntryDialogActive = false
                 manualEntryRating = null
                 manualEntryText = ""
                 scope.launch {
                     viewModel.addEntry(ratingToSave, contentToSave)
+                    if (wasManualCheckIn) viewModel.markManualCheckInCompleted()
                     snackbarHostState.showSnackbar("Entry saved")
                 }
             }

@@ -47,6 +47,9 @@ class MoodViewModel(
     val onboardingComplete: StateFlow<Boolean> = settingsManager.onboardingCompleteFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val manualCheckInCompleted: StateFlow<Boolean> = settingsManager.manualCheckInCompletedFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     val manualBackupState: StateFlow<ManualBackupState> = manualBackupManager.stateFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ManualBackupState())
 
@@ -84,6 +87,8 @@ class MoodViewModel(
 
     /** Save an in-app check-in with rating collected separately from note/#tags text. */
     suspend fun addEntry(rating: Int?, content: String) { entryWriter.create(rating, content) }
+
+    suspend fun markManualCheckInCompleted() = settingsManager.markManualCheckInCompleted()
 
     /** Retained for compact notification compatibility and older call sites. */
     suspend fun addEntry(input: String) { entryWriter.createCompact(input) }

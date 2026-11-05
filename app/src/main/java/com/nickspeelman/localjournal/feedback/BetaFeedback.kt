@@ -6,7 +6,7 @@ import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 
 object BetaFeedback {
-    const val ADDRESS = "nick@nickspeelman.com"
+    const val ADDRESS = "asidehelp@nickspeelman.com"
 
     fun body(context: Context): String {
         val notifications = if (NotificationManagerCompat.from(context).areNotificationsEnabled()) "Yes" else "No"

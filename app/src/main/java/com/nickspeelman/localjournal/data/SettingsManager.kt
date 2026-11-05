@@ -50,6 +50,7 @@ class SettingsManager(private val context: Context) {
         private val SHOW_REPORTS_CONNECTED = booleanPreferencesKey("privacy_show_reports_connected")
 
         private val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete_v2")
+        private val MANUAL_CHECK_IN_COMPLETED = booleanPreferencesKey("manual_check_in_completed")
         private val PRIVACY_INTRO_PENDING = booleanPreferencesKey("privacy_intro_pending_v2")
         private val ALPHA4_INITIALIZED = booleanPreferencesKey("alpha4_initialized")
         private val ALPHA4_BACKUP_INTRO_PENDING = booleanPreferencesKey("alpha4_backup_intro_pending")
@@ -72,6 +73,10 @@ class SettingsManager(private val context: Context) {
 
     val onboardingCompleteFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[ONBOARDING_COMPLETE] ?: false
+    }
+
+    val manualCheckInCompletedFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[MANUAL_CHECK_IN_COMPLETED] ?: false
     }
 
     val privacyIntroPendingFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
@@ -154,6 +159,10 @@ class SettingsManager(private val context: Context) {
 
     suspend fun dismissPrivacyIntroduction() {
         context.dataStore.edit { preferences -> preferences[PRIVACY_INTRO_PENDING] = false }
+    }
+
+    suspend fun markManualCheckInCompleted() {
+        context.dataStore.edit { preferences -> preferences[MANUAL_CHECK_IN_COMPLETED] = true }
     }
 
     private fun readUserSettings(preferences: Preferences): UserSettings = UserSettings(
